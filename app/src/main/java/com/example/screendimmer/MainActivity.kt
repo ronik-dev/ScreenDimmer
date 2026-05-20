@@ -1,5 +1,8 @@
 package com.example.screendimmer
 
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -16,5 +19,9 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+		if (!Settings.canDrawOverlays(this)) {
+		    val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
+		    startActivityForResult(intent, 0);
+		}
     }
 }
