@@ -7,7 +7,6 @@ import android.graphics.PixelFormat
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
-import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
 import android.widget.Button
@@ -16,16 +15,16 @@ import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
 class MainActivity : AppCompatActivity() {
+    
     private val overlayPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) {
         if (Settings.canDrawOverlays(this)) {
-            findViewById<ConstraintLayout>(R.id.main).removeAllViews()
+            findViewById<LinearLayout>(R.id.main).removeAllViews()
             drawOverlay()
         }
     }
@@ -34,11 +33,13 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
+        
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        
         if (!Settings.canDrawOverlays(this)) {
             requireOverlayPermission()
         } else {
@@ -47,23 +48,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun requireOverlayPermission() {
-        val mainLayout = findViewById<ConstraintLayout>(R.id.main)
-        
-        val container = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            gravity = Gravity.CENTER
-            layoutParams = ConstraintLayout.LayoutParams(
-                ConstraintLayout.LayoutParams.MATCH_PARENT,
-                ConstraintLayout.LayoutParams.MATCH_PARENT
-            )
-        }
+        val mainLayout = findViewById<LinearLayout>(R.id.main)
         
         val explanationText = TextView(this).apply {
             text = "This application requires permission to draw over other apps to dim the screen."
             textSize = 16f
-            setPadding(16, 16, 16, 16)
+            setPadding(16, 16, 16, 32) 
+            textAlignment = View.TEXT_ALIGNMENT_CENTER
         }
-        container.addView(explanationText)
+        mainLayout.addView(explanationText)
         
         val pButton = Button(this).apply {
             text = "Grant Permissions"
@@ -76,8 +69,7 @@ class MainActivity : AppCompatActivity() {
                 overlayPermissionLauncher.launch(intent)
             }
         }
-        container.addView(pButton)
-        mainLayout.addView(container)
+        mainLayout.addView(pButton)
     }
 
     private fun drawOverlay() {
@@ -93,6 +85,7 @@ class MainActivity : AppCompatActivity() {
         )
         val overlayView = View(this).apply {
             setBackgroundColor(Color.BLACK)
+            alpha = 0.5f 
         }
         wm.addView(overlayView, params)
     }
