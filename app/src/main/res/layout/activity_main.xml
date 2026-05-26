@@ -8,4 +8,27 @@
     android:orientation="vertical"
     android:padding="32dp"
     tools:context=".MainActivity">
+
+    <LinearLayout
+        android:id="@+id/ll_permission_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/tv_brightness_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Dim Intensity: 50%"
+        android:textSize="18sp"
+        android:layout_marginBottom="16dp" />
+
+    <SeekBar
+        android:id="@+id/sb_dimmer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="100"
+        android:progress="50" />
+
 </LinearLayout>
