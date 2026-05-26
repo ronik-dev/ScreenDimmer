@@ -23,73 +23,74 @@ class MainActivity : AppCompatActivity() {
 		) {
 				if (Settings.canDrawOverlays(this)) {
 						findViewById<LinearLayout>(R.id.ll_permission_container).removeAllViews()
+						// Use your helper function here so the intent is properly constructed
 						startDimmerService(50) 
 				}
 		}
 
-		override fun onCreate(savedInstanceState: Bundle?) {
-				super.onCreate(savedInstanceState)
-				enableEdgeToEdge()
-				setContentView(R.layout.activity_main)
+		override fun oncreate(savedinstancestate: bundle?) {
+				super.oncreate(savedinstancestate)
+				enableedgetoedge()
+				setcontentview(r.layout.activity_main)
 
-				ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-						val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-						v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+				viewcompat.setonapplywindowinsetslistener(findviewbyid(r.id.main)) { v, insets ->
+						val systembars = insets.getinsets(windowinsetscompat.type.systembars())
+						v.setpadding(systembars.left, systembars.top, systembars.right, systembars.bottom)
 						insets
 				}
 
-				val dimmerSeekBar = findViewById<SeekBar>(R.id.sb_dimmer)
-				val brightnessLabel = findViewById<TextView>(R.id.tv_brightness_label)
+				val dimmerseekbar = findviewbyid<seekbar>(r.id.sb_dimmer)
+				val brightnesslabel = findviewbyid<textview>(r.id.tv_brightness_label)
 
-				if (!Settings.canDrawOverlays(this)) {
-						requireOverlayPermission()
+				if (!settings.candrawoverlays(this)) {
+						requireoverlaypermission()
 				} else {
-						startDimmerService(dimmerSeekBar.progress)
+						startdimmerservice(dimmerseekbar.progress)
 				}
 
-				dimmerSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-						override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-								brightnessLabel.text = "Dim Intensity: $progress%"
+				dimmerseekbar.setonseekbarchangelistener(object : seekbar.onseekbarchangelistener {
+						override fun onprogresschanged(seekbar: seekbar?, progress: int, fromuser: boolean) {
+								brightnesslabel.text = "dim intensity: $progress%"
 
-								if (Settings.canDrawOverlays(this@MainActivity)) {
-										startDimmerService(progress)
+								if (settings.candrawoverlays(this@mainactivity)) {
+										startdimmerservice(progress)
 								}
 						}
 
-						override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-						override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+						override fun onstarttrackingtouch(seekbar: seekbar?) {}
+						override fun onstoptrackingtouch(seekbar: seekbar?) {}
 				})
 		}
 
-		private fun startDimmerService(level: Int) {
-				val serviceIntent = Intent(this, OVERLAY_SERVICE::class.java).apply {
-						putExtra("DIM_LEVEL", level)
+		private fun startdimmerservice(level: int) {
+				val serviceintent = intent(this, darkoverlay::class.java).apply {
+						putextra("dim_level", level)
 				}
-				startService(serviceIntent)
+				startservice(serviceintent)
 		}
 
-		private fun requireOverlayPermission() {
-				val permissionContainer = findViewById<LinearLayout>(R.id.ll_permission_container)
+		private fun requireoverlaypermission() {
+				val permissioncontainer = findviewbyid<linearlayout>(r.id.ll_permission_container)
 
-				val explanationText = TextView(this).apply {
-						text = "This application requires permission to draw over other apps to dim the screen."
-						textSize = 16f
-						setPadding(16, 16, 16, 32) 
-						textAlignment = View.TEXT_ALIGNMENT_CENTER
+				val explanationtext = textview(this).apply {
+						text = "this application requires permission to draw over other apps to dim the screen."
+						textsize = 16f
+						setpadding(16, 16, 16, 32) 
+						textalignment = view.text_alignment_center
 				}
-				permissionContainer.addView(explanationText)
+				permissioncontainer.addview(explanationtext)
 
-				val pButton = Button(this).apply {
-						text = "Grant Permissions"
-						setBackgroundColor(Color.WHITE)
-						setOnClickListener {
-								val intent = Intent(
-										Settings.ACTION_MANAGE_OVERLAY_PERMISSION, 
-										Uri.parse("package:$packageName")
+				val pbutton = button(this).apply {
+						text = "grant permissions"
+						setbackgroundcolor(color.white)
+						setonclicklistener {
+								val intent = intent(
+										settings.action_manage_overlay_permission, 
+										uri.parse("package:$packagename")
 								)
-								overlayPermissionLauncher.launch(intent)
+								overlaypermissionlauncher.launch(intent)
 						}
 				}
-				permissionContainer.addView(pButton)
+				permissioncontainer.addview(pbutton)
 		}
 }
